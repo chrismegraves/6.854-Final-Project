@@ -4,6 +4,9 @@
 \usepackage[T1]{fontenc}
 \usepackage[latin9]{inputenc}
 \usepackage{amsthm}
+\usepackage{tikz}
+\usepackage{array}
+\usetikzlibrary{arrows}
 
 \makeatletter
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Textclass specific LaTeX commands.
@@ -207,4 +210,86 @@ our proof.
 
 
 \subsubsection{Optimality of Ranking Algorithm} 
+
+
+\section{Online Vertex-Weighted Bipartite Matching}
+
+The online vertex-weighted bipartite matching problem is a generalization of the online bipartite matching problem. The difference is that each vertex in $V$ now has an associated weight. Instead of maximizing the size of the matching, we now aim to maximize the total weight of the vertex of $V$ which are included in the matching. The online bipartite matching problem described in Section ?? is the special case where all edges in $V$ have weight 1.
+
+Formally, the input to the problem is a bipartite graph $G = (U, V, E, \{w_v\}_{v \in V})$. The vertices in $V$ as well as their weights are known ahead of time. The vertices in $U$ arrive online. As before, the edges of a vertex $u \in U$ are revealed when $u$ arrives. When a vertex arrives it can either be matched to a neighbor in $V$ or not matched. However, once made, a decision cannot be undone. We aim to maximize the sum of weights of all the matched vertices in $V$. As before, we will assume that $|U| = |V|$ and that $G$ contains a perfect matching.
+
+\subsection{Greedy Algorithm}
+
+The obvious greedy solution to this problem is to match a vertex $u \in U$ to its neighbor of greatest weight, or leave it unmatched if it has no remaining neighbors. Call this algorithm $\textsc{Greedy}$.
+
+\begin{lem}
+\textsc{Greedy} is a (1/2)-approximation for vertex-weighted bipartite matching. Furthermore, this is the best approximation ratio the algorithm can achieve.
+\end{lem}
+
+\begin{proof}
+First we show that \textsc{Greedy} is a (1/2)-approximation. Let $O \subseteq E$ be the optimal offline matching, and $A \subseteq E$ be the matching produced by $\textsc{Greedy}$. If $A \neq O$, then there is some $v_{O} \in V$ such that $v_{O}$ is in $O$ but not $A$. Let $u$ be the vertex which was matched to $v_{O}$ in $O$. Then there must be some other vertex $v_{A}$ such that $u$ was matched to $v_{A}$ in $A$. This is because we know that $v_O$ was unmatched when $u$ was being matched, so the only way $u$ would not be matched to $v_O$ is if there were some other neighbor with greater weight.
+
+But now we have that the optimal value `lost' by $u$ is at most equal to the weight of its match in $A$. Therefore the total amount which $|A|$ losses is $A$. Hence, $|A| \geq |O|/2$.
+
+To see that this is the tightest approximation ratio for this algorithm, we offer an example. Consider the following graph.
+
+\begin{center}
+\begin{tikzpicture}[-,>=stealth',auto,
+  thick,main node/.style={circle,draw, minimum size = 0.75cm}]
+
+\node[draw = white] (a) at (0, 2.25){$U$};
+\node[draw = white] (b) at (3, 2.25){$V$};
+
+\node[main node] (v) at (0, 1.5){$u_1$};
+\node[main node] (w) at (0, 0){$u_2$};
+
+\node[main node] (v1) at (3, 1.5){$v_1$};
+\node[main node] (w1) at (3, 0){$v_2$};
+
+\path[]
+
+
+(w) edge node [below] {} (v1)
+(v) edge node [below] {} (w1)
+(v) edge node [below] {} (v1);
+
+\end{tikzpicture}
+\end{center}
+
+Let $w_{v_1} = 1 + \epsilon$ for some $\epsilon > 0$ and $w_{v_2} = 1$. Then the greedy algorithm will match only $(u_1, v_1)$, and the optimal solution will match $(u_1, v_2), (u_2, v_1)$. As $\epsilon$ approaches 0, the approximation ratio approaches $1/2$.
+
+\end{proof}
+
+We will not offer a proof here, but it turns out that no deterministic algorithm can do better than $\textsc{Greedy}$.
+
+\subsection{Generalizing Ranking}
+
+Consider the \textsc{Ranking} algorithm described above. For an input in which the range of weights is small, this algorithm will perform well. This is reflected in the fact that \textsc{Ranking} is optimal in the case where all weights are equal. However, when the range of weights is large, this algorithm can perform very poorly.
+
+We want to generalize the ranking algorithm in order to account for the weighted case. We will present a new algorithm which we will call \textsc{Perturbed-Greedy}. We will show that this algorithm is equivalent to \textsc{Ranking} in the case where all weights are equal, and we will show that this algorithm achieves an approximation ratio of $1 - \frac{1}{e}$.
+
+The \textsc{Perturned-Greedy} algorithm will use the function
+\[\psi(x) = 1 - e^{x - 1}.\]
+
+\begin{enumerate}
+\item For each $v \in V$, choose $x$ uniformly at random from $[0, 1]$.
+\item For arriving $u \in U$, match $u$ to the unmatched neighbor $v$ with highest value $b_v\psi(x)$.
+\item Break ties by vertex ID.
+\end{enumerate}
+
+Consider the case where all weights are equal. Since $x$ is chosen uniformly at random, choosing vertices according to the highest values of $b_v\psi(x)$ is equivalent to choosing a random ranking. Thus, \textsc{Perturbed-Greedy} is equivalent to \textsc{Ranking} when all weights are equal, as desired.
+
+We will prove the following Theorem.
+
+\begin{thm}
+\text{Perturned-Greedy} achieves an approximation ratio of $1 - \frac{1}{e}$ for the vertex-weighted online bipartite matching problem.
+\end{thm}
+
+While we will not offer a proof here, it turns out that this is the optimal approximation ratio for this problem. Intuitively, this result seems reasonable because we know that this is the optimal approximation ratio for a more specific version of this problem.
+
+\begin{proof}
+Proof here.
+\end{proof}
+
+
 \end{document}
