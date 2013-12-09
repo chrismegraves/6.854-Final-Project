@@ -1,12 +1,15 @@
 %% LyX 2.0.4 created this file.  For more info, see http://www.lyx.org/.
 %% Do not edit unless you really know what you are doing.
-\documentclass[oneside,english]{amsart}
+\documentclass[12pt,oneside,english]{amsart}
 \usepackage[T1]{fontenc}
 \usepackage[latin9]{inputenc}
+\usepackage{geometry}
+\geometry{verbose,lmargin=1.25in,rmargin=1.25in}
 \usepackage{amsthm}
 \usepackage{tikz}
 \usepackage{array}
 \usetikzlibrary{arrows}
+
 
 \makeatletter
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Textclass specific LaTeX commands.
@@ -28,14 +31,20 @@
 
 \begin{document}
 
-\section{Preliminaries}
+\section{Introduction}
+
+
+\subsection{Organization of the Report}
+
+
+\subsection{Preliminaries}
 
 We will begin by formalizing the classic online bipartite matching
 problem and providing definitions of some terms which we will use
 throughout this paper.
 
 
-\subsection{Classic Online Bipartite Matching Problem Definition}
+\subsubsection{Classic Online Bipartite Matching Problem Definition}
 
 In the classic version of the problem, we define the input as the
 bipartite graph $G=(U,V,E)$, where $U$ and $V$ are two independent
@@ -52,7 +61,7 @@ that $G$ has a perfect matching and thus the size of the optimal
 matching is $n$.
 
 
-\subsection{Useful Definitions}
+\subsubsection{Useful Definitions}
 \begin{defn}
 We let $N(u)\subset V$ to be the set of previously unmatched vertices
 in $V$ that are adjacent to a vertex $u\in U$.
@@ -192,25 +201,24 @@ which correctly proves the lemma. Again, we encourage interested readers
 to read the correct proof in {[}{[}{[}{]}{]}{]}{]}.
 \end{proof}
 Now we can compute the expected competetiveness. It is easy to see
-that the expected size of $m_{\sigma}$ is $\underset{1\le s\le t}{\sum}x_{s}$.
+that the expected size of $m_{\sigma}$ is $\sum_{1\le s\le t}x_{s}$.
 Since we are assuming that there exists a perfect matching, that means
-the expected competitiveness is $\frac{1}{n}\underset{1\le s\le n}{\sum}x_{s}$,
+the expected competitiveness is $\frac{1}{n}\sum_{1\le s\le n}x_{s}$,
 which we must lower bound using Lemma \ref{lem:If-we-define}. If
-we define $S_{t}=\underset{1\le s\le t}{\sum}x_{s}$, we can rewrite
-Lemma \ref{lem:If-we-define} to $1-(S_{t}-S_{t-1})\le\frac{1}{n}S_{t}$,
-which can be simplified to $1+S_{t-1}\le\left(\frac{n+1}{n}\right)S_{t}$.
-It follows that $S_{t}$, and by extension also $\frac{1}{n}\underset{1\le s\le t}{\sum}x_{s}$,
+we define $S_{t}=\sum_{1\le s\le t}x_{s}$, we can rewrite Lemma \ref{lem:If-we-define}
+to $1-(S_{t}-S_{t-1})\le\frac{1}{n}S_{t}$, which can be simplified
+to $1+S_{t-1}\le\left(\frac{n+1}{n}\right)S_{t}$. It follows that
+$S_{t}$, and by extension also $\frac{1}{n}\sum_{1\le s\le t}x_{s}$,
 is smallest when all of the inequalites are equalities, which gives
-us $S_{t}=\underset{1\le s\le t}{\sum}\left(\frac{n}{n+1}\right)^{s}$.
-As a result, our expected competitiveness $\frac{1}{n}\underset{1\le s\le n}{\sum}x_{s}=\frac{S_{n}}{n}$
-is lower bounded by $\frac{1}{n}\underset{1\le s\le n}{\sum}\left(\frac{n}{n+1}\right)^{s}$
+us $S_{t}=\sum_{1\le s\le t}\left(\frac{n}{n+1}\right)^{s}$. As a
+result, our expected competitiveness $\frac{1}{n}\sum_{1\le s\le n}x_{s}=\frac{S_{n}}{n}$
+is lower bounded by $\frac{1}{n}\sum_{1\le s\le n}\left(\frac{n}{n+1}\right)^{s}$
 which after some mathemagic becomes $1-(\frac{n}{n+1})^{n}$ which
 approaches $1-\frac{1}{e}$ as $n$ goes to infinity, thus concluding
 our proof.
 
 
-\subsubsection{Optimality of Ranking Algorithm} 
-
+\subsubsection{Optimality of Ranking Algorithm}
 
 \section{Online Vertex-Weighted Bipartite Matching}
 
