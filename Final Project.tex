@@ -39,8 +39,22 @@
 
 \maketitle
 
-
 \section{Introduction}
+
+Although first introduced in 1990 by Karp, Vazirani, and Vazirani
+\cite{key-1}, the online bipartite matching problem has in recent
+years garnered a lot of new interest due to its applications in Internet
+advertising. Like its offline counterpart, the general goal of the
+online bipartite matching problem and its variants is to produce an
+optimal matching between two mutually exclusive sets of vertices.
+Unlike its offline counterpart, however, one of the sets of vertices
+is receive online, i.e. one-by-one. On each online step, a vertex
+of the online set is given along with its set of adjacent vertices
+and the algorithm is tasked with irreversibly matching the incoming
+vertex if possible. Variants of this problem include adding weights
+on matched vertices and adding uncertainty if a matching will succeed.
+These variants generalize the original problem to a wide variety of
+applications particuarlly in the domain of online advertising.
 
 
 \subsection{Organization of the Report}
@@ -63,7 +77,7 @@ throughout this paper.
 
 \subsubsection{Classic Online Bipartite Matching Problem Definition}
 
-In the classic version of the problem, first introduced in \cite{key-1},
+In the classic version of the problem, as first introduced in \cite{key-1},
 we define the input as the bipartite graph $G=(U,V,E)$, where $U$
 and $V$ are two independent sets of $n$ vertices each and $E$ is
 the set of edges connecting the vertices in $U$ to the vertices in
