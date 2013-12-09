@@ -31,8 +31,12 @@
 
 \begin{document}
 
-\title{Err... we should name this}
-\author{Caelan Garrett, Chris Graves, Casey O'Brien}
+\title{Survey On Online Bipartite Matching and Its Variants}
+\author{Caelan Garrett (caelan@mit.edu)}
+\author{ Chris Graves (graves@mit.edu)}
+\author{Casey O'Brien (cmobrien@mit.edu)}
+
+
 \maketitle
 
 
@@ -40,6 +44,14 @@
 
 
 \subsection{Organization of the Report}
+
+In Section 2, we will demonstrate and analyze two algorithms (one
+deterministic and one random) that solve the classic version of the
+online bipartite matching problem. Next, in Section 3, we will present
+the online vertex-weighted bipartite matching problem and the analogous
+algorithms that solve that problem. Finally, in Section 4 we will
+introduce online bipartite matching with stochastic rewards presenting
+again both deterministic and random solutions.
 
 
 \subsection{Preliminaries}
@@ -50,21 +62,20 @@ throughout this paper.
 
 
 \subsubsection{Classic Online Bipartite Matching Problem Definition}
-\label{section:classic}
 
-In the classic version of the problem, we define the input as the
-bipartite graph $G=(U,V,E)$, where $U$ and $V$ are two independent
-sets of $n$ vertices each and $E$ is the set of edges connecting
-the vertices in $U$ to the vertices in $V$. For this problem we
-assume that our algorithm has full access to all of the vertices in
-$V$ from the beginning, but receives each vertex $u\in U$ one at
-a time in a preselected order. Each time a vertex $u\in U$ is received,
-the edges incident to $u$ become known to the algorithm and the algorithm
-is thus tasked with permanently matching $u$ to an adjacent, unmatched
-vertex $v\in V$ if possible. The goal of the problem is t o create
-the largest sized matching possible. Unless otherwise stated, we assume
-that $G$ has a perfect matching and thus the size of the optimal
-matching is $n$.
+In the classic version of the problem, first introduced in \cite{key-1},
+we define the input as the bipartite graph $G=(U,V,E)$, where $U$
+and $V$ are two independent sets of $n$ vertices each and $E$ is
+the set of edges connecting the vertices in $U$ to the vertices in
+$V$. For this problem we assume that our algorithm has full access
+to all of the vertices in $V$ from the beginning, but receives each
+vertex $u\in U$ one at a time in a preselected order. Each time a
+vertex $u\in U$ is received, the edges incident to $u$ become known
+to the algorithm and the algorithm is thus tasked with permanently
+matching $u$ to an adjacent, unmatched vertex $v\in V$ if possible.
+The goal of the problem is t o create the largest sized matching possible.
+Unless otherwise stated, we assume that $G$ has a perfect matching
+and thus the size of the optimal matching is $n$.
 
 
 \subsubsection{Useful Definitions}
@@ -83,7 +94,8 @@ $m^{*}$ as an optimal matching, which we assume is a perfect matching.
 \section{Classic Online Bipartite Matching Algorithms}
 
 Below we present and analyze two algorithms for the classic online
-bipartite matching problem: the Greedy algorithm and the Ranking algorithm.
+bipartite matching problem (the Greedy algorithm and the Ranking algorithm)
+as they were presented in \cite{key-1} and \cite{key-2}.
 
 
 \subsection{Greedy Algorithm}
@@ -96,8 +108,8 @@ is optimal for deternministic algorithms.
 \subsubsection{Greedy Algorithm Description}
 
 As one might expect, upon reception of a vertex $u\in U$ the Greedy
-algorithm always, simply matches $u$ with an arbitrary vertex $v\in N(u)$
-if $N(u)\ne\emptyset$. 
+algorithm works by always, simply matching $u$ with an arbitrary
+vertex $v\in N(u)$ if $N(u)\ne\emptyset$. 
 
 
 \subsubsection{Greedy Algorithm Analysis}
@@ -118,19 +130,20 @@ We can further demonstrate that no deterministic algorithm can have
 better competitiveness than $\frac{1}{2}$. Suppose, for example,
 an adversarial input in which each of the first $\frac{n}{2}$ vertices
 from $U$ that the algorithm receives are adjacent to every vertex
-$V$. Then the remaining $\frac{n}{2}$ vertices from U are only adjacent
-to the vertices that the algorithm was determined to have already
-matched. Thus, clearly for every deterministic algorithm there is
-an input for which it is $\frac{1}{2}$ competitive.
+$V$. Then the remaining $\frac{n}{2}$ vertices from $U$ are only
+adjacent to the vertices that the algorithm was determined to have
+had already matched. Thus, clearly for every deterministic algorithm
+there is an input for which it is $\frac{1}{2}$ competitive.
 
 
 \subsection{Ranking Algorithm}
 
 Since the upperbound for the competitiveness of determinstic algorithms
 is $\frac{1}{2}$, we will need to add randomization in order to get
-an improvement. Luckily, by simply adding a single element of randomness
-and tweaking our Greedy algorithm so that there is no arbitrary choice,
-we can get an improved expected competitiveness. 
+an improvement. Luckily, as suggested in \cite{key-1}, by simply
+adding a single element of randomness and tweaking our Greedy algorithm
+so that there is no arbitrary choice, we can get an improved expected
+competitiveness. 
 
 
 \subsubsection{Ranking Algorithm Description}
@@ -145,7 +158,6 @@ i.e. $N(u)=\emptyset$, the algorithm does not match $u$.
 
 
 \subsubsection{Ranking Algorithm Analysis}
-\label{section:ranking analysis}
 
 Like in the Greedy algorithm, a received vertex $u\in U$ is not matched
 if and only if $N(u)=\emptyset$. As a result, we know that its competitiveness
@@ -156,9 +168,13 @@ algorithms are, which leads us to the following theorem.
 The Ranking algorithm has an expected competitiveness of $1-\frac{1}{e}\approx0.63$.
 \end{thm}
 We will ``prove'' this theorem with an extremely intuitive, but
-slightly incorrect proof. We encourage enthusiastic readers to read
-{[}{[}{[}{]}{]}{]}, if they would like to get the correct, but more
-technical version of the proof.
+slightly incorrect proof that is presented in \cite{key-2} for the
+sake of intuition. We encourage enthusiastic readers to read \cite{key-2}
+in its entirety, if they would like to also get the correct, but more
+technical version of the proof. It is important to note here, that
+the original proof, as presented in \cite{key-1} had an error that
+was detected by Krohn and Varadarajan in 2007. The error was first
+corrected by \cite{key-19}, but then quickly simplified in \cite{key-2}.
 
 Let us define $m_{\sigma}$ as the matching produced by the Ranking
 algorithm with ranking function $\sigma$ for some given input. We
@@ -205,7 +221,7 @@ and $u$ randomly and independently of $\sigma$ can result in having
 the relation that if vertex $v$ is not matched in $m_{\sigma}$,
 then $u\in R_{t+1}$. In this case $u$ and $R_{t+1}$ are independent,
 which correctly proves the lemma. Again, we encourage interested readers
-to read the correct proof in {[}{[}{[}{]}{]}{]}{]}.
+to read the correct proof in \cite{key-2}.
 \end{proof}
 Now we can compute the expected competetiveness. It is easy to see
 that the expected size of $m_{\sigma}$ is $\sum_{1\le s\le t}x_{s}$.
@@ -225,7 +241,28 @@ approaches $1-\frac{1}{e}$ as $n$ goes to infinity, thus concluding
 our proof.
 
 
-%\subsubsection{Optimality of Ranking Algorithm}
+\subsubsection{Optimality of Ranking Algorithm}
+
+Now that we demonstrated that the expected competitiveness of the
+Ranking algorithm is at least $1-\frac{1}{e}$, the question becomes,
+``Is it possible do better?'' The following theorem proven in \cite{key-1},
+suggest that no, it is not possible.
+\begin{thm}
+The competitivess of any online bipartite matching algorithm is bounded
+above by $(1-\frac{1}{e})+O(1)$.
+\end{thm}
+In \cite{key-1}, the authors demonstrate this theorem by proving
+that no online algorithm can do better for a particular graph with
+exactly one perfect matching in which the first few vertices incoming
+vertices from $U$ are adjacent to all or most of the the vertices
+in $V$, but the last few vertices from $U$ are only adjacent to
+a few or just one of the vertices in $V$. The reason it causes this
+bound, after some nontrivial mathematical massaging, is that the first
+vertices received from $U$ have many potential vertices to be matched
+with from $V$. Thus, it is unlikely that they will be matched with
+their optimal matches, which uses up the few potential matches for
+the later incoming vertices from $U$ before the algorithm gets to
+them.
 
 \section{Online Vertex-Weighted Bipartite Matching}
 
@@ -381,10 +418,31 @@ Since the original paper published in 1990, the online bipartite matching proble
 
 \section{Acknowledgements}
 
-We should probably say something acknowledging Karger and also the people who end up critiquing our paper.
+We would like to thank Professor Karger for a great semester.
 
-\section{References}
+\begin{thebibliography}{{[}AGKM{]}}
+\bibitem[{[}KVV{]}]{key-1} R. Karp, U. Vazirani, and V. Vazirani,
+\textquotedblleft{}An optimal algorithm for online bipartite matching,\textquotedblright{}
+in Proceedings of the 22nd Annual ACM Symposium on Theory of Computing,
+1990. (http://www.cs.berkeley.edu/\textasciitilde{}vazirani/pubs/online.pdf)
+
+\bibitem[{[}BM{]}]{key-2} B. Birnbaum and C. Mathieu, \textquotedblleft{}On-line
+bipartite matching made simple,\textquotedblright{} 2008. (http://cs.brown.edu/\textasciitilde{}claire/Publis/sigactnews08.pdf)
+
+\bibitem[{[}GM{]}]{key-19}Gagan Goel and Aranyak Mehta. Online budgeted
+matching in random input models with applications to adwords. In SODA
+'08: Proceedings of the nineteenth annual ACM-SIAM symposium on discrete
+algorithms, pages 982-991, Philadelphia, PA, USA, 2008. Society for
+Industrial and Applied Mathematics.
+
+\bibitem[{[}AGKM{]}]{key-3} Gagan Aggarwal, Gagan Goel, Chinmay Karande,
+and Aranyak Mehta, \textquotedblleft{}Online vertex-weighted bipartite
+matching and single-bid budgeted allocations,\textquotedblright{}
+SODA, 2011. (arXiv:1007.1271 {[}cs.DS{]})
+
+\bibitem[{[}MP{]}]{key-4} A. Mehta and D. Panigrahi, \textquotedblleft{}Online
+matching with stochastic rewards,\textquotedblright{} FOCS, 2012,
+pp. 728-737. (http://www.cs.duke.edu/\textasciitilde{}debmalya/papers/focs12-matching.pdf)\end{thebibliography}
  
-To be added...
 
 \end{document}
