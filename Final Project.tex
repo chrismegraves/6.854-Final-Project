@@ -1,14 +1,16 @@
 %% LyX 2.0.4 created this file.  For more info, see http://www.lyx.org/.
 %% Do not edit unless you really know what you are doing.
-\documentclass[12pt,oneside,english]{amsart}
+\documentclass[11pt,oneside,english]{amsart}
 \usepackage[T1]{fontenc}
 \usepackage[latin9]{inputenc}
 \usepackage{geometry}
-\geometry{verbose,lmargin=1.25in,rmargin=1.25in}
+\geometry{verbose, margin = 1in}
 \usepackage{amsthm}
 \usepackage{tikz}
 \usepackage{array}
 \usetikzlibrary{arrows}
+
+\setlength{\parskip}{1pc}
 
 
 \makeatletter
@@ -48,11 +50,10 @@ advertising. Like its offline counterpart, the general goal of the
 online bipartite matching problem and its variants is to produce an
 optimal matching between two mutually exclusive sets of vertices.
 Unlike its offline counterpart, however, one of the sets of vertices
-is receive online, i.e. one-by-one. On each online step, a vertex
-of the online set is given along with its set of adjacent vertices
-and the algorithm is tasked with irreversibly matching the incoming
-vertex if possible. Variants of this problem include adding weights
-on matched vertices and adding uncertainty if a matching will succeed.
+is received online, i.e. one-by-one. For each online step, a vertex
+of the online set is revealed along with its set of adjacent vertices.
+The algorithm is tasked with irreversibly matching the incoming
+vertex if possible. Variants of this problem include considering weighted vertices and adding uncertainty if a matching will succeed.
 These variants generalize the original problem to a wide variety of
 applications particuarlly in the domain of online advertising.
 
@@ -80,30 +81,26 @@ throughout this paper.
 
 In the classic version of the problem, as first introduced in \cite{key-1},
 we define the input as the bipartite graph $G=(U,V,E)$, where $U$
-and $V$ are two independent sets of $n$ vertices each and $E$ is
+and $V$ are two independent sets of vertices and $E$ is
 the set of edges connecting the vertices in $U$ to the vertices in
 $V$. For this problem we assume that our algorithm has full access
 to all of the vertices in $V$ from the beginning, but receives each
 vertex $u\in U$ one at a time in a preselected order. Each time a
-vertex $u\in U$ is received, the edges incident to $u$ become known
-to the algorithm and the algorithm is thus tasked with permanently
-matching $u$ to an adjacent, unmatched vertex $v\in V$ if possible.
-The goal of the problem is t o create the largest sized matching possible.
-Unless otherwise stated, we assume that $G$ has a perfect matching
-and thus the size of the optimal matching is $n$.
+vertex $u\in U$ is received, the edges incident on $u$ are revealed and the algorithm then either permanently
+matches $u$ to an unmatched adjacent vertex $v\in V$  or chooses to leave $u$ permanently unmatched.
+The goal of the problem is to maximize the size of the matching.
+For the purposes of this paper, we assume that $|U| = |V| = n$ and that $G$ has a perfect matching. Thus the size of the optimal matching is $n$.
 
 
 \subsubsection{Useful Definitions}
 \begin{defn}
-We let $N(u)\subset V$ to be the set of previously unmatched vertices
+Let $N(u)\subset V$ be the set of previously unmatched vertices
 in $V$ that are adjacent to a vertex $u\in U$.
 \end{defn}
 Thus, it is not until the algorithm receives a vertex $u\in U$ that
-the set of vertices $N(u)$ becomes known.
+the set of vertices $N(u)$ is revealed.
 \begin{defn}
-We define $m$ as the algorithms current matching and $m(u)$ as the
-vertex $v\in V$ that $u$ is matched with. Furthermore, we define
-$m^{*}$ as an optimal matching, which we assume is a perfect matching.
+We define $m^*$ as an optimal matching, which we assume is a perfect matching. Furthermore we define $m^*(u)$ as the vertex $v \in V$ that $u$ is matched with.
 \end{defn}
 
 \section{Classic Online Bipartite Matching Algorithms}
@@ -115,31 +112,25 @@ as they were presented in \cite{key-1} and \cite{key-2}.
 
 \subsection{Greedy Algorithm}
 
-The Greedy algorithm, despite its simplicity and na�vet�, actually
+The Greedy algorithm, which we will call \textsc{Greedy}, actually
 provides a reasonable competitiveness, which, as we will later prove,
-is optimal for deternministic algorithms.
+is optimal for deterministic algorithms. The algorithm works as follows. Upon reception of a vertex $u\in U$, \textsc{Greedy} matches $u$ to an arbitrary
+vertex $v\in N(u)$ if $N(u)\ne\emptyset$, and otherwise leaves it unmatched.
 
+\begin{thm}  
+\textsc{Greedy} is a (1/2)-competitive algorithm for the classic online bipartite matching problem.
+\end{thm}
 
-\subsubsection{Greedy Algorithm Description}
-
-As one might expect, upon reception of a vertex $u\in U$ the Greedy
-algorithm works by always, simply matching $u$ with an arbitrary
-vertex $v\in N(u)$ if $N(u)\ne\emptyset$. 
-
-
-\subsubsection{Greedy Algorithm Analysis}
-
-It is easy to see that the Greedy algorithm has a competitive ratio
+\begin{proof}
+It is easy to see that \textsc{Greedy} has a competitive ratio
 of at least $\frac{1}{2}$, because for every vertex $u$ it is either
-the case that $u$ is matched to some vertex $v\in V$ or $N(u)=\emptyset$.
+the case that $u$ is matched to some vertex $v \in V$ or $N(u)=\emptyset$.
 Remember, we assume that there exists a perfect matching $m^{*}$
 which matches all $2n$ of the vertices in $n$ matchings. For every
-vertex $u\in U$, at least one of $u$ or $m^{*}(u)$ must be in our
-Greedy algorithm's matching. Thus, our algorithm matches a minimum
+vertex $u\in U$, at least one of $u$ or $m^{*}(u)$ must be in \textsc{Greedy}'s matching. Thus, our algorithm matches a minimum
 of $n$ vertices in total in a minimum of $\frac{n}{2}$ matchings. 
 
-
-\subsubsection{Greedy Algorithm Optimality}
+\end{proof}
 
 We can further demonstrate that no deterministic algorithm can have
 better competitiveness than $\frac{1}{2}$. Suppose, for example,
@@ -153,27 +144,20 @@ there is an input for which it is $\frac{1}{2}$ competitive.
 
 \subsection{Ranking Algorithm}
 
-Since the upperbound for the competitiveness of determinstic algorithms
+Since the upper-bound for the competitiveness of deterministic algorithms
 is $\frac{1}{2}$, we will need to add randomization in order to get
 an improvement. Luckily, as suggested in \cite{key-1}, by simply
 adding a single element of randomness and tweaking our Greedy algorithm
 so that there is no arbitrary choice, we can get an improved expected
 competitiveness. 
 
-
-\subsubsection{Ranking Algorithm Description}
-
-The Ranking algorithm begins with an initialization phase that consists
+The Ranking algorithm, which we will call \textsc{Ranking}, begins with an initialization phase that consists
 of choosing a random permutation of the vertices in $V$, which will
 serve as the basis for our ranking function $\sigma$. Then upon receiving
 each vertex $u\in U$, the algorithm matches $u$ to the vertex $v\in N(u)$
 which minimizes $\sigma(v)$, such that $v$ has not already been
 matched. Obviously, if every vertex adjacent to $u$ is already matched,
 i.e. $N(u)=\emptyset$, the algorithm does not match $u$.
-
-
-\subsubsection{Ranking Algorithm Analysis}
-\label{section:ranking analysis}
 
 Like in the Greedy algorithm, a received vertex $u\in U$ is not matched
 if and only if $N(u)=\emptyset$. As a result, we know that its competitiveness
@@ -284,22 +268,23 @@ them.
 
 The online vertex-weighted bipartite matching problem is a generalization of the online bipartite matching problem. The difference is that each vertex in $V$ now has an associated weight. Instead of maximizing the size of the matching, we now aim to maximize the total weight of the vertices of $V$ which are included in the matching. The classic online bipartite matching problem described in Section \ref{section:classic} is the special case where all edges in $V$ have weight 1.
 
-Formally, the input to the problem is a bipartite graph $G = (U, V, E, \{w_v\}_{v \in V})$. The vertices in $V$ as well as their weights are known ahead of time. The vertices in $U$ arrive online. As before, the edges of a vertex $u \in U$ are revealed when $u$ arrives. When a vertex arrives it can either be matched to a neighbor in $V$ or not matched. However, once made, a decision cannot be undone. We aim to maximize the sum of weights of all the matched vertices in $V$. As before, we will assume that $|U| = |V|=n$ and that $G$ contains a perfect matching.
+Formally, the input to the problem is a bipartite graph $G = (U, V, E, \{w_v\}_{v \in V})$. As before, the vertices in $V$ as well as their weights are known ahead of time and the vertices in $U$ arrive online. The edges of a vertex $u \in U$ are revealed when $u$ arrives. When a vertex arrives it can either be permanently matched to an unmatched neighbor in $V$ or not matched. We aim to maximize the sum of weights of all the matched vertices in $V$. As before, we will assume that $|U| = |V|=n$ and that $G$ contains a perfect matching.
 
-\subsection{Greedy Algorithm}
+In this section, we will present two algorithms to solve the online vertex-weighted bipartite matching problem. We will then show that these algorithms are generalizations of the algorithms from Section 2, and furthermore that they are able to achieve the same competitive ratios.
 
-The obvious greedy solution to this problem is to match a vertex $u \in U$ to its neighbor of greatest weight, or leave it unmatched if it has no remaining neighbors. Call this algorithm $\textsc{Greedy}$.
+\subsection{Generalized Greedy Algorithm}
 
-\begin{lem}
-\textsc{Greedy} is a (1/2)-approximation for vertex-weighted bipartite matching. Furthermore, this is the best approximation ratio the algorithm can achieve.
-\end{lem}
+The obvious greedy solution to this problem is to match a vertex $u \in U$ to its neighbor of greatest weight, or leave it unmatched if it has no remaining neighbors. Call this algorithm $\textsc{Weighted-Greedy}$.
+
+\begin{thm}
+\textsc{Weighted-Greedy} is a (1/2)-competitive algorithm for vertex-weighted bipartite matching. Furthermore, this is the best competitive ratio the algorithm can achieve.
+\end{thm}
 
 \begin{proof}
-First we show that \textsc{Greedy} is a (1/2)-approximation. Let $O \subseteq E$ be the optimal offline matching, and $A \subseteq E$ be the matching produced by $\textsc{Greedy}$. If $A \neq O$, then there is some $v_{O} \in V$ such that $v_{O}$ is in $O$ but not $A$. Let $u$ be the vertex which was matched to $v_{O}$ in $O$. Then there must be some other vertex $v_{A}$ such that $u$ was matched to $v_{A}$ in $A$. This is because we know that $v_O$ was unmatched when $u$ was being matched, so the only way $u$ would not be matched to $v_O$ is if there were some other neighbor with greater weight.
 
-But now we have that the optimal value `lost' by $u$ is at most equal to the weight of its match in $A$. Therefore the total amount which $A$ `loses' is $|A|$. Hence, $|A| \geq |O|/2$.
+First we show that \textsc{Weighted-Greedy} has a competitive ratio of at least 1/2. Let $\sigma$ be an ordering of the nodes defined by decreasing order of weight. Let $u$ be an arbitrary vertex in $U$, and let $v = m^*(u)$ be a vertex not matched in $m_{\sigma}$. Then by Lemma 5, in $m^*$ $u$ must be matched to a vertex of weight at most $w_v$. But we can see that the optimal value `lost' by $u$ is at most equal to the weight of its match in $m_{\sigma}$. Therefore the total amount which $m_{\sigma}$ `loses' is $|m_{\sigma}|$. Hence, $|m_{\sigma}| \geq |m^*|/2$.
 
-To see that this is the tightest approximation ratio for this algorithm, we offer an example. Consider the following graph.
+To see that this is the tightest competitive ratio for this algorithm, we offer an example. Consider the following graph.
 
 \begin{center}
 \begin{tikzpicture}[-,>=stealth',auto,
@@ -324,21 +309,21 @@ To see that this is the tightest approximation ratio for this algorithm, we offe
 \end{tikzpicture}
 \end{center}
 
-Say that vertices arrive in the order $(v_1, v_2)$, and let $w_{v_1} = 1 + \epsilon$ for some $\epsilon > 0$ and $w_{v_2} = 1$. Then the greedy algorithm will match only $(u_1, v_1)$, and the optimal solution will match $(u_1, v_2), (u_2, v_1)$. As $\epsilon$ approaches 0, the approximation ratio approaches $1/2$.
+Say that vertices arrive in the order $(v_1, v_2)$, and let $w_{v_1} = 1 + \epsilon$ for some $\epsilon > 0$ and $w_{v_2} = 1$. Then the greedy algorithm will match only $(u_1, v_1)$, and the optimal solution will match $(u_1, v_2), (u_2, v_1)$. As $\epsilon$ approaches 0, the competitive ratio approaches $1/2$.
 
 \end{proof}
 
-We will not offer a proof here, but it turns out that here, as in the case with equal weights, no deterministic algorithm can do better than $\textsc{Greedy}$.
+As in the unweighted case, no deterministic algorithm can do better than $\textsc{Weighted-Greedy}$. [[[ no proof given in paper? ]]
 
-\subsection{Generalizing Ranking}
+\subsection{Generalized Ranking Algorithm}
 
 Consider the \textsc{Ranking} algorithm described above. For an input in which the range of weights is small, this algorithm will perform well. This is reflected in the fact that \textsc{Ranking} is optimal in the case where all weights are equal. However, when the range of weights is large, this algorithm can perform very poorly.
 
-We want to generalize the ranking algorithm in order to account for the weighted case. We will present a new algorithm which we will call \textsc{Perturbed-Greedy}, and then we will show that this algorithm is equivalent to \textsc{Ranking} in the case where all weights are equal.
+We want to generalize the ranking algorithm in order to account for the weighted case. We will present a new algorithm which we will call \textsc{Perturbed-Greedy}, and then we will show that this algorithm is equivalent to \textsc{Ranking} in the case where all weights are equal. This algorithm will begin by `perturbing' each of the weights of the vertices in $V$. Then it will follow the \textsc{Greedy} scheme as outlined above.
 
-The \textsc{Perturbed-Greedy} algorithm will use the function
+More formally, the \textsc{Perturbed-Greedy} algorithm will use the function
 \[\psi(x) = 1 - e^{x - 1}.\]
-
+Then it will behave as follows.
 \begin{enumerate}
 \item For each $v \in V$, choose $x$ uniformly at random from $[0, 1]$.
 \item For arriving $u \in U$, match $u$ to the unmatched neighbor $v$ with highest value $b_v\psi(x)$.
@@ -351,15 +336,20 @@ Consider the case where all weights are equal. Since $x$ is chosen uniformly at 
 \textsc{Perturbed-Greedy} achieves an approximation ratio of $1 - \frac{1}{e}$ for the vertex-weighted online bipartite matching problem.
 \end{thm}
 
-We will not offer a proof of this theorem here. However we note that this is consistent with the approximation of \textsc{Ranking}. It turns out that, as is the case with \textsc{Ranking}, this is the optimal approximation ratio for this problem. Intuitively, this result seems reasonable because we know that this is the optimal approximation ratio for the more specific version of this problem.
+We will offer some intuition as to why the \textsc{Perturbed-Greedy} algorithm is an effective solution to the weighted vertex problem. For the classic online bipartite matching problem, we presented two algorithms: \textsc{Greedy} and \textsc{Ranking}. For very skewed edge weights, \textsc{Greedy} will perform quite well, because the loss from the optimal solution that each match has to charge will be much less than the value of the match. On the other hand, we have already noted that \textsc{Ranking} performs well on graphs where the range of weights is small.
 
-The proof of the approximation ratio of \textsc{Perturbed-Greedy} is quite similar to the proof of the approximation ratio of \textsc{Ranking} in Section ~\ref{section:ranking analysis}. We encourage readers to read this proof, as well as the proof of the optimality of the approximation ratio, in [[[[[]]]].
+To develop a good algorithm for the weighted case, we need something which combines the benefits of each of these algorithms. When weights are highly variable, \textsc{Perturbed-Greedy} is likely to use a ranking very similar to the ranking in $\textsc{Greedy}$, and therefore is able to find a good solution in that case. When weights are very similar, \textsc{Perturbed-Greedy} uses a ranking which is closer to a completely random ranking, and thus will behave well in this situation as well.
+
+While we will not offer a full proof of the theorem here, we note that this is consistent with the competitive ratio of \textsc{Ranking}. It turns out that, as is the case with \textsc{Ranking}, this is the optimal competitive ratio for this problem. This result seems reasonable because we know that this is the optimal competitive ratio for the more specific version of this problem.
+
+The proof of the approximation ratio of \textsc{Perturbed-Greedy} is quite similar to the proof of the approximation ratio of \textsc{Ranking} in Section ~\ref{section:ranking analysis}. We encourage readers to read this proof, as well as the proof of the optimality of the approximation ratio, in \cite{key-3}.
+
 
 \section{Stochastic Online Bipartite Matching}
 
 \subsection{Stochatic Variant Definition}Another interesting variant of the online bipartite matching problem is online bipartite matching with stochastic rewards \cite{key-4}. The setup is similar to the classic problem \cite{key-1} where the goal is to maximize the number of matchings between a stream of vertices $V$ and with known vertices $U$. The twist is that each matching has some probability of success $p_{uv}$. The goal is now to maximize the expected number of successful matchings given that some may fail. The variant of this problem was motivated by its practical applications to internet advertising and crowdsourcing. Internet advertising involves matching advertisers' ads to be shown to users of a service where advertisers pay each time a user clicks on an ad (pay-per-click advertising). The likelihood that a user $u$ clicks on an ad $v$ can be modeled by a probability $p_{uv}$. Thus, this matching problem can be modeled as an online stochastic reward matching problem where the service wants to maximize its revenue given a stream of ads to be matched with users. This setup can also model crowdsourcing where each worker $u$ has a probability $p_{uv}$ of completing task $v$ so the online assignment hopes to maximize the expected number of completed tasks. 
 
-Solving this problem for arbitrary $p_uv$ is an open problem, however, Mehta and Panigrahi present online algorithms and analysis for the problem when $\forall{u,v}: p_{uv} = p$. These algorithms and their bounds on competitive ratios can still be practically usable for the above applications if the variance in $ p_{uv}$ is small. For example in online advertising, the probability of a user clicking on an ad is small for almost all users so using one estimate for $p$ should still give informative, approximate bounds. Additionally, the case where $p \rightarrow 0$ (called a vanishing probability) is interesting theoretically on its own. 
+Solving this problem for arbitrary $p_{uv}$ is an open problem, however, Mehta and Panigrahi present online algorithms and analysis for the problem when $\forall{u,v}: p_{uv} = p$. These algorithms and their bounds on competitive ratios can still be practically usable for the above applications if the variance in $ p_{uv}$ is small. For example in online advertising, the probability of a user clicking on an ad is small for almost all users so using one estimate for $p$ should still give informative, approximate bounds. Additionally, the case where $p \rightarrow 0$ (called a vanishing probability) is interesting theoretically on its own. 
 
 \subsection{Optimal Algorithm}As with any online algorithm problem, algorithms are compared to an optimal algorithm that knows the input stream (the full bipartite graph). A complication here is the non-determinism of the matching success. To mend this, the optimal algorithm (\textsc{OPT}) is defined non-stochastically as being able to fractionally match vertices to maximize $\sum_u{\sum_v{p x_{uv}}}$ such that $\sum_u{x_{uv}} \leq 1$. By giving \textsc{OPT} more power, it upper bounds the best matching of any algorithm. Note that for most graphs, the expected number of matchings is $p |U| = p n$ which is used to simply the analysis.
 
@@ -377,15 +367,25 @@ In this generalization, the goal is to maximize the expected number of filled bi
 
 The competitive ratio of both of these algorithms is proved using a technique called factor-revealing linear programming \cite{key-5}. Drawing from ideas involving the duality between the algorithm and an adversary, it formulates the adversary's "choice" of some outcomes of the algorithm to maximize the number of vertices that are not matched. The adversary's moves however are constrained to be consistent with the applied algorithm. After finding this primal linear program, taking the dual and applying weak duality to some feasible solution of the dual gives an upper bound on the maximum primal objective value. Thus, the result is an upper bound of the worst possible performance of the algorithm giving the bound on the competitive ratio. The goal of the algorithmist is to find a set of constraints that follow from running the algorithm that limit the ability of the adversary to maximize the worst case performance. This technique is particularly effective because of the algorithms' simplicity allows them to be encoded into these constraints. 
 
-\subsection{Ranking Algorithm}\textsc{Ranking} is the same as previously presented with the ability to adaptively rematched failed matchings. \textsc{Ranking} randomly permutes the set of U vertices. Upon an incoming vertex to be matched, the algorithm matches it with the highest ranked neighbor that has not been successfully matched. The analysis introduces the notion of a good matching and a bad matching. A bad matching occurs when matched edge $(u, v)$ has $rank(u) < rank(opt(v))$ . The intuition is that the algorithm matched a vertex too early (earlier than the optimal). Otherwise, the matching is a good match. $good(s)$ and $bad(s)$ are respectfully defined to be the expected load of the vertex $u$ with $s = rank(u)$ due to good matches and bad matches. The linear program takes the following form where the adversary chooses $good(s)$ and $bad(s)$ to minimize the expected number of matches under some algorithmic constraints. 
+%\subsection{Ranking Algorithm}\textsc{Ranking} is the same as previously presented with the ability to adaptively rematched failed matchings. \textsc{Ranking} randomly permutes the set of U vertices. Upon an incoming vertex to be matched, the algorithm matches it with the highest ranked neighbor that has not been successfully matched. The analysis introduces the notion of a good matching and a bad matching. A bad matching occurs when matched edge $(u, v)$ has $rank(u) < rank(opt(v))$ . The intuition is that the algorithm matched a vertex too early (earlier than the optimal). Otherwise, the matching is a good match. $good(s)$ and $bad(s)$ are respectfully defined to be the expected load of the vertex $u$ with $s = rank(u)$ due to good matches and bad matches. The linear program takes the following form where the adversary chooses $good(s)$ and $bad(s)$ to minimize the expected number of matches under some algorithmic constraints. 
+
+\subsection{Ranking Algorithm}\textsc{Ranking} is the same as previously presented with the ability to adaptively rematched failed matchings. \textsc{Ranking} randomly permutes the set of U vertices. Upon an incoming vertex to be matched, the algorithm matches it with the highest ranked neighbor that has not been successfully matched. The analysis introduces the notion of a good matching and a bad matching. A bad matching occurs when matched edge $(u, v)$ has $\sigma(u) < \sigma(m^*(v))$ . The intuition is that the algorithm matched a vertex too early (earlier than the optimal). Otherwise, the matching is a good match. $g(s)$ and $b(s)$ are respectfully defined to be the expected load of the vertex $u$ with $s = \sigma(u)$ due to good matches and bad matches. The linear program takes the following form where the adversary chooses $g(s)$ and $b(s)$ to minimize the expected number of matches under some algorithmic constraints. 
 
 \begin{defn} \textsc{Ranking} Factor-Revealing Linear Program \\
-minimize $\sum_{s}{match(s)}$ \\
-subject to \\
-$1) \forall{s}: match(s) = good(s) + bad(s)$\\
-$2) \forall{t}: \frac{1 - (1-p)^{\frac{1}{p}}}{p} - match(t) \leq \sum_{s \leq t}{\frac{bad(s)}{n-s}}$ \\
-$3) \forall{t}: \sum_{s \leq t}{\frac{s*bad(s)}{n-s}} \leq \sum_{s \leq t + 1}{good(s)}$ \\
-$4) \sum_{t}{match(t)} \geq \frac{1}{2} + \frac{\sum_{t}{good(t)}}{2}$
+%minimize $\sum_{s}{match(s)}$ \\
+%subject to \\
+%$1) \forall{s}: match(s) = good(s) + bad(s)$\\
+%$2) \forall{t}: \frac{1 - (1-p)^{\frac{1}{p}}}{p} - match(t) \leq \sum_{s \leq t}{\frac{bad(s)}{n-s}}$ \\
+%$3) \forall{t}: \sum_{s \leq t}{\frac{s*bad(s)}{n-s}} \leq \sum_{s \leq t + 1}{good(s)}$ \\
+%$4) \sum_{t}{match(t)} \geq \frac{1}{2} + \frac{\sum_{t}{good(t)}}{2}$
+\begin{alignat}{3}
+\text{minimize}  \quad & \sum_{s \leq n} m(s) & \nonumber \\
+\text{subject to} \quad & m(s) = g(s) + b(s) & \quad \forall{s} \\
+& \frac{1 - (1-p)^{\frac{1}{p}}}{p} - m(t) \leq \sum_{s \leq t}{\frac{b(s)}{n-s}} & \quad \forall{t} \\
+&  \sum_{s \leq t}{\frac{s\cdot b(s)}{n-s}} \leq \sum_{s \leq t + 1}{g(s)} & \quad \forall{t} \\
+& \sum_{t \leq n}{m(t)} \geq \frac{1}{2} + \frac{1}{2} \cdot \sum_{t \leq n}{g(t)} &
+\end{alignat}
+
 \end{defn}
 
 Constraint 1) trivially comes from the definitions of $good(s)$ and $bad(s)$. The other constraints are more involved. We prove only Constraint 2) to give the flavor for how these are discovered. The proof of the Constraint 3) is found in \cite{key-19}.
