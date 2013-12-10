@@ -55,7 +55,7 @@ of the online set is revealed along with its set of adjacent vertices.
 The algorithm is tasked with irreversibly matching the incoming
 vertex if possible. Variants of this problem include considering weighted vertices and adding uncertainty if a matching will succeed.
 These variants generalize the original problem to a wide variety of
-applications particuarlly in the domain of online advertising.
+applications particularly in the domain of online advertising.
 
 
 \subsection{Organization of the Report}
@@ -87,18 +87,20 @@ $V$. For this problem we assume that our algorithm has full access
 to all of the vertices in $V$ from the beginning, but receives each
 vertex $u\in U$ one at a time in a preselected order. Each time a
 vertex $u\in U$ is received, the edges incident on $u$ are revealed and the algorithm then either permanently
-matches $u$ to an unmatched adjacent vertex $v\in V$  or chooses to leave $u$ permanently unmatched.
+matches $u$ to an unmatched, adjacent vertex $v\in V$  or chooses to leave $u$ permanently unmatched.
 The goal of the problem is to maximize the size of the matching.
 For the purposes of this paper, we assume that $|U| = |V| = n$ and that $G$ has a perfect matching. Thus the size of the optimal matching is $n$.
 
 
 \subsubsection{Useful Definitions}
 \begin{defn}
-Let $N(u)\subset V$ be the set of previously unmatched vertices
-in $V$ that are adjacent to a vertex $u\in U$.
+Let $N(u)\subset V$ be the set of available vertices that $u$
+can still be matched with. More formally, we define $N(u)$ as the set of vertices
+in $V$ that are adjacent to a vertex $u\in U$, but still haven't
+been matched by the algorithm.
 \end{defn}
-Thus, it is not until the algorithm receives a vertex $u\in U$ that
-the set of vertices $N(u)$ is revealed.
+Note that $N(u)$ for a vertex $u\in U$ is revealed to the algorithm only once the
+algorithm receives vertex $u$.
 \begin{defn}
 We define $m^*$ as an optimal matching, which we assume is a perfect matching. Furthermore we define $m^*(u)$ as the vertex $v \in V$ that $u$ is matched with.
 \end{defn}
@@ -168,7 +170,7 @@ algorithms are, which leads us to the following theorem.
 The Ranking algorithm has an expected competitiveness of $1-\frac{1}{e}\approx0.63$.
 \end{thm}
 We will ``prove'' this theorem with an extremely intuitive, but
-slightly incorrect proof that is presented in \cite{key-2} for the
+slightly negligent proof that is presented in \cite{key-2} for the
 sake of intuition. We encourage enthusiastic readers to read \cite{key-2}
 in its entirety, if they would like to also get the correct, but more
 technical version of the proof. It is important to note here, that
@@ -178,52 +180,53 @@ corrected by \cite{key-19}, but then quickly simplified in \cite{key-2}.
 
 Let us define $m_{\sigma}$ as the matching produced by the Ranking
 algorithm with ranking function $\sigma$ for some given input. We
-can relate Ranking($\sigma$) with the optimal matching $m^{*}$ using
+can relate $m_{\sigma}$ with the optimal matching $m^{*}$ using
 the following lemma.
 \begin{lem}
 \label{lem:For-every-vertex}For every vertex $u\in U$, if vertex
-$v=m^{*}(u)$ is not matched in $m_{\sigma}$, then in $m_{\sigma}$
-$u$ is matched to a vertex $v'=m_{\sigma}(u)$ such that $\sigma(v')<\sigma(v)$.\end{lem}
+$v=m^{*}(u)$ is not matched in $m_{\sigma}$, then $m_{\sigma}(u)=v'$
+such that $\sigma(v')<\sigma(v)$.\end{lem}
 \begin{proof}
 Since vertex $v$ is not matched in $m_{\sigma}$, that means that
-when $u$ was recieved by the Ranking algorithm, $v$ was still unmatched.
+when $u$ was received by the Ranking algorithm, $v$ was still unmatched.
 Thus, the only reason $u$ would not be matched to $v$ would be if
-it could get matched to a higher ranking vertex $v'$, such that $\sigma(v')<\sigma(v)$.
+it could get matched to a strictly higher ranking vertex $v'$, such
+that $\sigma(v')<\sigma(v)$.
 \end{proof}
 We will use the following lemma to get our competitiveness.
 \begin{lem}
 \label{lem:If-we-define}If we define $x_{t}$ as the probability
 over ranking function $\sigma$ that the vertex $v\in V$ such that
-$\sigma(v)=t$ is matched in $m_{\sigma}$, then $1-x_{t}\le\frac{1}{n}\underset{1\le s\le t}{\sum}x_{s}$
+$\sigma(v)=t$ is matched in $m_{\sigma}$, then $1-x_{t}\le\frac{1}{n}\sum_{1\le s\le t}x_{s}$
 for all $t$ in range $[1,n]$.\end{lem}
 \begin{proof}
 Let us define $u$ as the vertex in $U$ that $v$ is matched with
 in the optimal matching, i.e. such that $v=m^{*}(u)$. Furthermore,
-let us define the set of vertices $R_{t-1}\subset U$ as the set of
+let us define the set of vertices $R_{t}\subset U$ as the set of
 vertices in $U$ that are matched in $m_{\sigma}$ to vertices in
-$V$ of rank that is no more than $t-1$. In otherwords for all $u\in U$
+$V$ of rank that is less than $t$,. In other words for all $u\in U$
 such that $u$ is matched in $m_{\sigma}$, $u$ is in $R_{t}$ if
 and only if $\sigma(m_{\sigma}(u))<t$. By Lemma \ref{lem:For-every-vertex},
 if vertex $v$ is not matched in $m_{\sigma}$, then $u\in R_{t}$.
 Thus, the probability that $v$ is not matched in $m_{\sigma}$ is
-bounded by the probability that $u\in R_{t}$. Clearly, by the defintion
+bounded by the probability that $u\in R_{t}$. Clearly, by the definition
 of $x_{t}$, the probability that $v$ is not matched is $1-x_{t}$
-and the expected size of $R_{t}=\underset{1\le s<t}{\sum}x_{s}$.
-If $u$ and $R_{t}$ were independent, then the probability that $u\in R_{t}$
-would simply be $\frac{|R_{t}|}{n}=\frac{1}{n}\underset{1\le s<t}{\sum}x_{s}$,
-which would complete our lemma with $1-x_{t}\le\frac{1}{n}\underset{1\le s<t}{\sum}x_{s}\le\frac{1}{n}\underset{1\le s\le t}{\sum}x_{s}$
+and the expected size of $R_{t}=\sum_{1\le s<t}x_{s}$. If $u$ and
+$R_{t}$ were independent, then the probability that $u\in R_{t}$
+would simply be $\frac{|R_{t}|}{n}=\frac{1}{n}\sum_{1\le s<t}x_{s}$,
+which would complete our lemma with $1-x_{t}\le\frac{1}{n}\sum_{1\le s<t}x_{s}\le\frac{1}{n}\sum_{1\le s\le t}x_{s}$
 .
 
-However, this is where this proof fails. The fact is $u$ and $R_{t}$
-are not actually independent in the way we set it up. The correct,
-but less intuitive, proof demonstrates how choosing vertices $v$
-and $u$ randomly and independently of $\sigma$ can result in having
-the relation that if vertex $v$ is not matched in $m_{\sigma}$,
-then $u\in R_{t+1}$. In this case $u$ and $R_{t+1}$ are independent,
-which correctly proves the lemma. Again, we encourage interested readers
-to read the correct proof in \cite{key-2}.
+However, the rigorous, correct proof is more complex. The fact is
+$u$ and $R_{t}$ are not actually independent in the way we set it
+up. The correct, but less intuitive, proof demonstrates how choosing
+vertices $v$ and $u$ randomly and independently of $\sigma$ can
+result in having the relation that if vertex $v$ is not matched in
+$m_{\sigma}$, then $u\in R_{t+1}$. In this case $u$ and $R_{t+1}$
+are independent, which correctly proves the lemma. Again, we encourage
+interested readers to read the correct proof in \cite{key-2}.
 \end{proof}
-Now we can compute the expected competetiveness. It is easy to see
+Now we can compute the expected competitiveness. It is easy to see
 that the expected size of $m_{\sigma}$ is $\sum_{1\le s\le t}x_{s}$.
 Since we are assuming that there exists a perfect matching, that means
 the expected competitiveness is $\frac{1}{n}\sum_{1\le s\le n}x_{s}$,
@@ -232,7 +235,7 @@ we define $S_{t}=\sum_{1\le s\le t}x_{s}$, we can rewrite Lemma \ref{lem:If-we-d
 to $1-(S_{t}-S_{t-1})\le\frac{1}{n}S_{t}$, which can be simplified
 to $1+S_{t-1}\le\left(\frac{n+1}{n}\right)S_{t}$. It follows that
 $S_{t}$, and by extension also $\frac{1}{n}\sum_{1\le s\le t}x_{s}$,
-is smallest when all of the inequalites are equalities, which gives
+is smallest when all of the inequalities are equalities, which gives
 us $S_{t}=\sum_{1\le s\le t}\left(\frac{n}{n+1}\right)^{s}$. As a
 result, our expected competitiveness $\frac{1}{n}\sum_{1\le s\le n}x_{s}=\frac{S_{n}}{n}$
 is lower bounded by $\frac{1}{n}\sum_{1\le s\le n}\left(\frac{n}{n+1}\right)^{s}$
@@ -248,8 +251,8 @@ Ranking algorithm is at least $1-\frac{1}{e}$, the question becomes,
 ``Is it possible do better?'' The following theorem proven in \cite{key-1},
 suggest that no, it is not possible.
 \begin{thm}
-The competitivess of any online bipartite matching algorithm is bounded
-above by $(1-\frac{1}{e})+O(1)$.
+The competitiveness of any online bipartite matching algorithm is
+bounded above by $(1-\frac{1}{e})+O(1)$.
 \end{thm}
 In \cite{key-1}, the authors demonstrate this theorem by proving
 that no online algorithm can do better for a particular graph with
