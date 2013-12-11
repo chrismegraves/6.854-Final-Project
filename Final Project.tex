@@ -10,7 +10,7 @@
 \usepackage{array}
 \usetikzlibrary{arrows}
 
-\setlength{\parskip}{0.78pc}
+\setlength{\parskip}{0.63pc}
 
 
 \makeatletter
@@ -426,6 +426,7 @@ Consider a vertex $v \in S$ and $u \in U$ such that $u$ and $v$ are matched in $
 
 To see that this is the tightest competitive ratio for this algorithm, we offer an example. Consider the following graph.
 
+\begin{figure}[ht!]
 \begin{center}
 \begin{tikzpicture}[-,>=stealth',auto,
   thick,main node/.style={circle,draw, minimum size = 0.75cm}]
@@ -456,6 +457,8 @@ To see that this is the tightest competitive ratio for this algorithm, we offer 
 
 \end{tikzpicture}
 \end{center}
+\caption{A graph demonstrating the tightness of the 1/2 competitive ratio for \textsc{Weighted-Greedy}.}
+\end{figure}
 
 Say that vertices arrive in the order $(v_1, v_2)$, and let $w_{v_1} = 1 + \epsilon$ for some $\epsilon > 0$ and $w_{v_2} = 1$. Then the greedy algorithm will match only $(u_1, v_1)$, and the optimal solution will match $(u_1, v_2), (u_2, v_1)$. As $\epsilon$ approaches 0, the competitive ratio approaches $1/2$.
 
@@ -585,9 +588,15 @@ We are now equipped to prove the correctness of the constraints 4.1 and 4.2. We 
 \begin{lem} For the variables as defined above, we have
 \[f_v(x) = (1-p)^{(x/p)}q_v(x).\]
 \begin{proof}
-\[f_v(x) = Pr[(b_v > x) \wedge (L^{\infty}_u(b_v) = x)]\] 
-\[f_v(x) = Pr[b_v > x]Pr[L^{\infty}_u(b_v) = x]\] 
-\[f_v(x) = (1-p)^{(x/p)}q_v(x)\] 
+
+\quad
+\begin{center}
+\begin{tabular}{r c l}
+$f_v(x)$ &$=$& $Pr[(b_v > x) \wedge (L^{\infty}_u(b_v) = x)]$\\ &&\\
+&$=$& $Pr[b_v > x]Pr[L^{\infty}_u(b_v) = x]$ \\ &&\\
+&$=$& $(1-p)^{(x/p)}q_v(x)$
+\end{tabular}
+\end{center}
 
 This follows from representing the probability of a resulting load being unsuccessful as the intersection of when the load is less than its threshold and the algorithm terminates with $x$. By independence, this separates giving the resulting expression where $(1-p)^{(x/p)}$ indicates that the matching fails $x/p$ times and $q_v(x)$ is probability of the resulting load. We can represent the probability that load $x$ succeeds for vertex $v$ as $g_v(x)$ and find a similar expression. 
 \end{proof}
@@ -596,9 +605,15 @@ This follows from representing the probability of a resulting load being unsucce
 \begin{lem} For the variables as defined above, we have
 \[g_v(x) = p(1-p)^{(x/p-1)}\sum_{y \geq x}{q_v(y)}.\]
 \begin{proof}
-\[g_v(x) = Pr[(b_v = x) \wedge (L^{\infty}_v(b_v) \geq x)]\]
-\[g_v(x) = Pr[b_v = x]Pr[L^{\infty}_v(b_v) \geq x]\]
-\[g_v(x) = p(1-p)^{(x/p-1)}\sum_{y \geq x}{q_v(y)}\] 
+
+\quad
+\begin{center}
+\begin{tabular}{r c l}
+$g_v(x)$ &$=$& $Pr[(b_v = x) \wedge (L^{\infty}_v(b_v) \geq x)]$\\ &&\\
+&$=$& $Pr[b_v = x]Pr[L^{\infty}_v(b_v) \geq x]$ \\ &&\\
+&$=$& $p(1-p)^{(x/p-1)}\sum_{y \geq x}{q_v(y)}$
+\end{tabular}
+\end{center}
 
 This follows from noting that a load is successful if it equals its threshold. But also, the resulting load of the algorithm if there is no limit on the load must give some load greater than $x$ or $x$ is not possibly obtained. This probability of the first part is $ p(1-p)^{(x/p-1)}$ while the probability of the second is the sum of each of these disjoint $q_v(y)$ events.
 \end{proof}
