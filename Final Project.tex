@@ -10,7 +10,7 @@
 \usepackage{array}
 \usetikzlibrary{arrows}
 
-\setlength{\parskip}{1pc}
+\setlength{\parskip}{0.78pc}
 
 
 \makeatletter
@@ -177,7 +177,7 @@ is always at least $1/2$. Since \textsc{Ranking} has a random element
 to it, it is not bounded in the same way that deterministic algorithms
 are, which leads us to the following theorem.
 \begin{thm}
-\textsc{Ranking} has an expected competitiveness of $1-\frac{1}{e}\approx0.63$. 
+\textsc{Ranking} has an expected competitiveness of $1-1/e\approx0.63$. 
 \end{thm}
 We will ``prove'' this theorem with an extremely intuitive, but
 slightly negligent proof that is presented in \cite{key-2} for the
@@ -274,7 +274,7 @@ Then we can complete our lemma with
 (p) edge [->] node [left] {Order of arrival} (o);
 
 \end{tikzpicture}
-\caption{The optimal matching $m^*$ is shown in the graph above. Let $t = \sigma(v)$. Then the highlighted nodes represent the set $R_t$.}
+\caption{The matching $m_{\sigma}$ is shown in the graph above. Let $t = \sigma(v)$. Then the highlighted nodes represent the set $R_t$.}
 \label{fig:Rt}
 \end{figure}
 \end{center}
@@ -301,7 +301,7 @@ the expected competitiveness is
 \]
 We will lower bound this competitiveness using Lemma \ref{lem:If-we-define}.
 Let us define $S_{t}=\sum_{1\le s\le t}p_{s}$ (note that this makes
-our expected competitiveness equal to $\frac{S_{n}}{n}$). We can
+our expected competitiveness equal to $S_{n}/n$). We can
 rewrite Lemma \ref{lem:If-we-define} to 
 \[
 1-(S_{t}-S_{t-1})\le\frac{1}{n}S_{t},
@@ -310,13 +310,13 @@ which can be simplified to
 \[
 1+S_{t-1}\le\left(\frac{n+1}{n}\right)S_{t}.
 \]
-It turns out that $S_{t}$, and by extension also $\frac{S_{n}}{n}$,
+It turns out that $S_{t}$, and by extension also $S_{n}/n$,
 is smallest when all of the inequalities are equalities, which can
 be solved to give us 
 \[
 S_{t}=\sum_{1\le s\le t}\left(\frac{n}{n+1}\right)^{s}.
 \]
-As a result, our expected competitiveness $\frac{S_{n}}{n}$ is lower
+As a result, our expected competitiveness $S_{n}/n$ is lower
 bounded by 
 \[
 \frac{1}{n}\sum_{1\le s\le n}\left(\frac{n}{n+1}\right)^{s}.
@@ -326,15 +326,15 @@ that this value is equivalent to
 \[
 1-\left(\frac{n}{n+1}\right){}^{n}.
 \]
-As $n$ approaches infinity, this value converges to $1-\frac{1}{e}$,
+As $n$ approaches infinity, this value converges to $1-1/e$,
 thus concluding our proof.
 
-Now that we demonstrated that the expected competitiveness of \textsc{Ranking} is at least $1-\frac{1}{e}$, the question becomes,
+Now that we demonstrated that the expected competitiveness of \textsc{Ranking} is at least $1-1/e$, the question becomes,
 ``Is it possible do better?'' The following theorem proven in \cite{key-1},
 suggest that no, it is not possible.
 \begin{thm}
 The competitiveness of any online bipartite matching algorithm is
-bounded above by $(1-\frac{1}{e})+O(1)$.
+bounded above by $(1-1/e)+O(1)$.
 \end{thm}
 
 
@@ -482,7 +482,7 @@ The algorithm begins with an initialization step in which we `perturb' the weigh
 Consider the case where all weights are equal. Since $x$ is chosen uniformly at random, choosing vertices according to the highest values of $w_v\psi(x)$ is equivalent to choosing a random ranking. Thus, \textsc{Perturbed-Greedy} is equivalent to \textsc{Ranking} when all weights are equal, as desired.
 
 \begin{thm}
-\textsc{Perturbed-Greedy} achieves an approximation ratio of $1 - \frac{1}{e}$ for the vertex-weighted online bipartite matching problem.
+\textsc{Perturbed-Greedy} achieves an approximation ratio of $1 - 1/e$ for the vertex-weighted online bipartite matching problem.
 \end{thm}
 
 We will offer some intuition as to why the \textsc{Perturbed-Greedy} algorithm is an effective solution to the weighted vertex problem. Consider two previous algorithms which we could use to solve this problem:  \textsc{Weighted-Greedy} and \textsc{Ranking}. When $V$ has a large range of weights, \textsc{Weighted-Greedy} will perform quite well, because the algorithm will place higher priority on matching the larger weights, and the smaller weights matter less when the range is large. On the other hand, we have already noted that \textsc{Ranking} performs well on graphs where the range of weights is small.
@@ -542,16 +542,16 @@ Two algorithms are known to perform well for Stochastic Online Bipartite Matchin
 \subsection{Proof Techniques}
 The competitive ratio of both of these algorithms is proved using a technique called factor-revealing linear programming \cite{key-5}. Drawing from ideas involving the duality between the algorithm and an adversary, it formulates the adversary's `choice' of some outcomes of the algorithm to maximize the number of vertices that are not matched. The adversary's moves however are constrained to be consistent with the applied algorithm. 
 
-After finding this primal linear program, taking the dual and applying weak duality to some feasible solution of the dual gives an upper bound on the maximum primal objective value, in this case the expected number of failed matchings. Thus, the result is an upper bound of the worst possible performance of the algorithm giving the bound on the competitive ratio. The goal of the algorithmist is to find a set of constraints on the outcomes that follow from running the algorithm and limit the ability of the adversary to maximize the worst case performance. These contraints are not usually nice looking or have obvious intuitive meaning, but with more discoverd constraints, the bound on the competitive ratio will be tighter. This technique is particularly effective in online algorithms because the algorithms' simplicity allows them to be encoded into these constraints. 
+After finding this primal linear program, taking the dual and applying weak duality to some feasible solution of the dual gives an upper bound on the maximum primal objective value, in this case the expected number of failed matchings. Thus, the result is an upper bound of the worst possible performance of the algorithm giving the bound on the competitive ratio. The goal of the algorithmist is to find a set of constraints on the outcomes that follow from running the algorithm and limit the ability of the adversary to maximize the worst case performance. These constraints are not usually nice looking or have obvious intuitive meaning, but with more discovered constraints, the bound on the competitive ratio will be tighter. This technique is particularly effective in online algorithms because the algorithms' simplicity allows them to be encoded into these constraints. 
 
 \subsection{Stochastic Balance Algorithm}
 
 \textsc{Stochastic-Balance} does not involve any randomization. On an incoming $u$, the algorithm attempts to balance the number of failed attempted matchings among vertices in $V$. To do so, \textsc{Stochastic-Balance} always matches $u$ to the unsuccessfully matched neighbor with the least number of failed matchings. The intuition for why this is effective for $p \rightarrow 0$ is that the concavity of the function for the expected number of matchings when $p \rightarrow 0$ is such that it is maximized when the number of attempts is distributed as evenly as possible.
 
-The analysis of the competitive ratio is made possible by formulating this problem using bin packing. The idea is that each $v$ randomly chooses a bin size $b_v$ that is unknown to the algorithm before the algorithm starts. Each potential matching with $v$ is an item with size $p$ that is placed into the bin for $v$ and adds a load of $p$. We say that $v$ is successfully matched if and only if its bin is full. At that point, it no longer accepts potential matches. In essence, $b_v$ encodes the number of matching attempts needed before a success. This language allows us to easily represent the number of matching attempts as the current load divided by $p$. By linearity of expectation, the expected load on a vertex is equal to the probability of a successful matching.
+The analysis of the competitive ratio is made possible by formulating this problem using bin packing. The idea is that each $v$ randomly chooses a bin size $b_v$ that is unknown to the algorithm before the algorithm starts. Each potential matching with $v$ is an item with size $p$ that is placed into the bin for $v$ and adds a load of $p$. We say that $v$ is successfully matched if and only if its bin is exactly full. At that point, it no longer accepts potential matches. In essence, $b_v$ encodes the number of matching attempts needed before a success. This language allows us to easily represent the number of matching attempts as the current load divided by $p$. By linearity of expectation, the expected load on a vertex is equal to the probability of a successful matching.
 
-\begin{defn}Let $b_v$ be a geometric random variable with parameter $p$. It represents the bin size for vertex $v$. 
-\[Pr[b_v = pt] = p(1-p)^{t-1}\]
+\begin{defn}Let $b_v$ be a multiple of $p$ of a geometric random variable with parameter $p$. It represents the bin size for vertex $v$. Formally, we have
+\[Pr[b_v = pt] = p(1-p)^{t-1}.\]
 \end{defn}
 
 The factor-revealing linear program of \cite{key-4} defines $f_v(x)$ to be the variables of the linear program corresponding to the probability that vertex $v$ has failed to be matched at the end of the algorithm with resultant load $x$. Note that the number of load levels is linear with $|U|$ because there are at most $|U|$ matching edges to any $v$ which contribute $p$ to the load. The expected number of failures for the algorithm is 
@@ -565,7 +565,7 @@ Next, we display the factor-revealing linear program for \textsc{Stochastic-Bala
 \text{maximize}  \quad & \sum_{x}{\sum_{v}f_v(x)} & \nonumber \\
 \text{subject to} \quad & \sum_x{\sum_v{f_v(x)(1-p)^{-x/p}}} = n & \\
 & \sum_{y \leq x}{\sum_v{(1+L^*_u)f_u(y)}} + (1-p)^{x/p}\sum_{y>x}{(1-p)^{-y/p}\left (\sum_u{f_y(y)}\right )} \leq n & \quad \forall{x} \\
-& \sum_v{((1-p)^{-L^*_v/p} + \sum_{y<L^*_v}{f_v(y)(1 + L^*_v - x)(1-p)^{-y/p})}} \leq n & \quad \forall{x}
+& \sum_v{ \left ((1-p)^{-L^*_v/p} + \sum_{y<L^*_v}{f_v(y)(1 + L^*_v - x)(1-p)^{-y/p}} \right )} \leq n & \quad \forall{x}
 \end{alignat}
 \label{defn:lp}
 \end{defn}
@@ -582,17 +582,19 @@ Let $q_v(x)$ be the probability that $x$ is the resulting load for $v$ after any
 
 We are now equipped to prove the correctness of the constraints 4.1 and 4.2. We will do so through the following Lemmas.
 
-\begin{lem} $f_v(x) = (1-p)^{(x/p)}q_v(x)$ 
+\begin{lem} For the variables as defined above, we have
+\[f_v(x) = (1-p)^{(x/p)}q_v(x).\]
 \begin{proof}
 \[f_v(x) = Pr[(b_v > x) \wedge (L^{\infty}_u(b_v) = x)]\] 
 \[f_v(x) = Pr[b_v > x]Pr[L^{\infty}_u(b_v) = x]\] 
 \[f_v(x) = (1-p)^{(x/p)}q_v(x)\] 
 
-This follows from representing the probability of a resulting load being unsuccessful as the intersection of when the load is less than its threshold and the algorithm terminates with $x$. By independence, this separates giving the resulting expression where $(1-p)^{(x/p)}$ indicates that the matching fails $x/p$ times and $q_v(x)$ is probability of the resulting load. We can represent the probability that load $x$ succeeds for vertex $v$ as $g_v(x)$ and find a similar looking expression. 
+This follows from representing the probability of a resulting load being unsuccessful as the intersection of when the load is less than its threshold and the algorithm terminates with $x$. By independence, this separates giving the resulting expression where $(1-p)^{(x/p)}$ indicates that the matching fails $x/p$ times and $q_v(x)$ is probability of the resulting load. We can represent the probability that load $x$ succeeds for vertex $v$ as $g_v(x)$ and find a similar expression. 
 \end{proof}
 \end{lem}
 
-\begin{lem} $g_v(x) = p(1-p)^{(x/p-1)}\sum_{y \geq x}{q_v(y)}$ 
+\begin{lem} For the variables as defined above, we have
+\[g_v(x) = p(1-p)^{(x/p-1)}\sum_{y \geq x}{q_v(y)}.\]
 \begin{proof}
 \[g_v(x) = Pr[(b_v = x) \wedge (L^{\infty}_v(b_v) \geq x)]\]
 \[g_v(x) = Pr[b_v = x]Pr[L^{\infty}_v(b_v) \geq x]\]
@@ -602,19 +604,21 @@ This follows from noting that a load is successful if it equals its threshold. B
 \end{proof}
 \end{lem}
 
-\begin{lem} Constraint 4.1: $\sum_x{\sum_v{f_v(x)(1-p)^{-x/p}}} = n$
+\begin{lem} Constraint 4.1 is correct. Formally, we have
+\[\sum_x{\sum_v{f_v(x)(1-p)^{-x/p}}} = n.\]
 \begin{proof}
- Because $f_v(x)$ and $g_v(x)$ are defined complementarily, the sum over the possible loads and vertices must equal the total number of vertices, $\sum_v{\sum_x{(f_v(x) + g_v(x))}} = n$. Substituting $g_v(x)$ for $f_v(x)$ gives Constraint 4.1.
+ Because $f_v(x)$ and $g_v(x)$ are defined complementarily, the sum over the possible loads and vertices must equal the total number of vertices, $\sum_v{\sum_x{(f_v(x) + g_v(x))}} = n$. Substituting $g_v(x)$ for $f_v(x)$ gives constraint 4.1.
 \end{proof}
 \end{lem}
 
-\begin{lem} Constraint 4.2: $\sum_{y \leq x}{\sum_v{(1+L^*_u)f_u(y)}} + (1-p)^{x/p}\sum_{y>x}{(1-p)^{-y/p}(\sum_u{f_y(y)})} \leq n$
+\begin{lem} Constraint 4.2 is correct. Formally, we have
+\[\sum_{y \leq x}{\sum_v{(1+L^*_u)f_u(y)}} + (1-p)^{x/p}\sum_{y>x}{(1-p)^{-y/p}(\sum_u{f_y(y)})} \leq n.\]
 \begin{proof}
 \[\sum_{y \leq x}{\sum_v{L^*_vf_v(y)}} \leq \sum_{y \leq x}{y \sum_v{(f_v(y) + g_v(y))}} + x\sum_{y > x}{\sum_v{(f_v(y) + g_v(y))}}\]
 \[\sum_{y \leq x}{\sum_v{(1+L^*_v)f_v(y)}} + (1-p)^{x/p}\sum_{y>x}{(1-p)^{-y/p}(\sum_v{f_y(y)})}
 \leq \sum_x{\sum_v{f_v(x)(1-p)^{-x/p}}} = n\]
 
-This is because for a vertex $v$ that ends up with load $x$, all $v'$ on the optimal offline solution that took a possible matching from $v$ must have had a lower load at the time to be picked before $u$ by \textsc{Stochastic-Balance}. So the expected sum of optimal loads assigned when the algorithm fails an assignment is less than the sum of expected load of the failed vertices produced by  \textsc{Stochastic-Balance}. Substituting $g_v(x)$ for $f_v(x)$, simplifying, and appling the equality learned in Constraint 4.1 gives Constraint 4.2.
+This is because for a vertex $v$ that ends up with load $x$, all $v'$ on the optimal offline solution that took a possible matching from $v$ must have had a lower load at the time to be picked before $u$ by \textsc{Stochastic-Balance}. So the expected sum of optimal loads assigned when the algorithm fails an assignment is less than the sum of expected load of the failed vertices produced by  \textsc{Stochastic-Balance}. Substituting $g_v(x)$ for $f_v(x)$, simplifying, and appling the equality learned in constraint 4.1 gives constraint 4.2.
 \end{proof}
 \end{lem}
 
