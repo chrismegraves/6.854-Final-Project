@@ -496,11 +496,13 @@ The proof of the approximation ratio of \textsc{Perturbed-Greedy} is quite simil
 
 \section{Stochastic Online Bipartite Matching}
 
-Another interesting variant of the online bipartite matching problem is online bipartite matching with stochastic rewards, as presented in \cite{key-4}. The setup is similar to the classic problem presented in Section 2. As before, the goal is to maximize the number of matchings between a set of $U$ of vertices which are received online and a set $V$ which is known from the start. The difference here is that each matching has some probability of success $p_{uv}$. The goal is now to maximize the expected number of successful matchings given that some may fail.
+Another interesting variant of the online bipartite matching problem is online bipartite matching with stochastic rewards, as presented in \cite{key-4}. The setup is similar to the classic problem presented in Section 2. As before, the goal is to maximize the number of matchings between a set of $U$ of vertices which are received online and a set $V$ which is known from the start. The difference here is that each matching has some probability of success $p_{uv}$. The algorithms presented in this section are adaptive meaning they immediately learn the result of an attempted matching. The goal is now to maximize the expected number of successful matchings given that some attempts may fail.
 
 This variant of the classic problem was motivated by its practical applications to internet advertising and crowdsourcing. Internet advertising involves matching advertisers' ads to be shown to users of a service where advertisers pay each time a user clicks on an ad (pay-per-click advertising). The likelihood that a user $v$ clicks on an ad $u$ can be modeled by a probability $p_{uv}$. Thus, this matching problem can be modeled as an online stochastic reward matching problem where the service wants to maximize its revenue given a stream of ads to be matched with users. This setup can also model crowdsourcing where each worker $v$ has a probability $p_{uv}$ of completing task $u$ so the online assignment hopes to maximize the expected number of completed tasks.
 
-Solving this problem for arbitrary $p_{uv}$ is an open problem; however \cite{key-4} presents online algorithms and analysis for the problem when all edges have the same probability of success. Formally, for all $u \in U$ and $v \in V$, we have $p_{uv} = p$. These algorithms and their bounds on competitive ratios are still practically usable for the above applications if the variance in values of $p_{uv}$ is small. For example, in online advertising, the probability of a user clicking on an ad is small for almost all users, so using one estimate for $p$ should still give informative, approximate bounds. This special case where $p \rightarrow 0$ is called a vanishing probability and is interesting theoretically on its own. 
+Solving this problem for arbitrary $p_{uv}$ is an open problem; however \cite{key-4} presents online algorithms and analysis for the problem when all edges have the same probability of success. Formally, for all $u \in U$ and $v \in V$, we have $p_{uv} = p$. These algorithms and their bounds on competitive ratios are still practically usable for the above applications if the variance in values of $p_{uv}$ is small. For example, in online advertising, the probability of a user clicking on an ad is small for almost all users, so using one estimate for $p$ should still give informative, approximate bounds. 
+
+%This special case where $p \rightarrow 0$ is called a vanishing probability and is interesting theoretically on its own. 
 
 \subsection{Stochastic Optimal Algorithm}
 
@@ -508,32 +510,34 @@ As with any online algorithm problem, algorithms are compared to an optimal offl
 \[\sum_{u \in U}{\sum_{v \in V}{p \cdot x_{uv}}},\]
 such that no vertex has more than a total of one full matching (i.e., $\sum_{u \in U}{x_{uv}} \leq 1$ for all $u \in U$ and $\sum_{v \in V} x_{uv} \leq 1$ for all $v \in V$). By giving the optimal algorithm more power, we are able to upper bound the best matching of any algorithm.
 
-\subsection{Adaptive versus Non-Adaptive Algorithms}
+%\subsection{Adaptive versus Non-Adaptive Algorithms}
+%
+%The non-determinism of matching success also introduces two classes of algorithms not seen previously in the paper: adaptive and non-adaptive. After each pair is matched, the match's success is immediately computed according to $p$. If successful, $u$ and $v$ are both removed from the set of unmatched vertices. Otherwise, $u$ is permanently left unmatched and $v$ remains free to be matched later.
+%
+%An adaptive algorithm can learn the result of a matching immediately and attempt to rematch $v$ with a later $u$ if prior matches failed. However, a non-adaptive algorithm does not learn this information until after the algorithm completes. As a result, it may try to rematch a $v$ that was already successfully matched. In this case, each $v$ is only matched to one vertex.
+%
+%$Explained via the advertising application, a non-adaptive algorithm won't learn if a user clicked on an ad until all ads are assigned, but an adaptive algorithm learns relatively quickly if the user clicked on an ad so it can target future ads to other users. Intuitively, non-adaptive algorithms are less powerful than adaptive algorithms because they learn less information which results in a lower expected number of matches. For a vanishing probability, the competitive ratio for non-adaptive algorithms is at most $1/2$ for both deterministic and randomized algorithms, making them less interesting than their adaptive counterparts.
+%
+%\begin{thm}
+%\label{thm:Non-adaptive}
+%For a vanishing probability, any non-adaptive algorithm (deterministic or randomized) achieves a competitive ratio of at most $1/2$ for the stochastic online bipartite matching problem.
+%\end{thm}
+%\begin{proof}
+%The proof finds a particularly bad distribution of inputs for a deterministic algorithm. By Yao's minimax principle, this then bounds the best performance of any randomized algorithm. This bad input distribution is composed of $n$ known $V$ vertices called $v_1, v_2, ..., v_n$ permuted randomly when given to the algorithm. $U$ contains $n/p$ incoming vertices that are seperated into $n$ groups that each contain $1/p$ vertices. These groups arrive in order $U_1, U_2, ..., U_n$, but the sequence of $u$ within each group is permuted randomly. Finally, each group $U_i$ has matching edges to each $v_j$ where $i \leq j \leq n$ with probability $p$ of success. 
+%
+%The optimal offline algorithm is able to fractionally assign each group $U_i$ to $v_i$ without uncertainty giving $n$ total matchings. Note that a deterministic, non-adaptive algorithm could not follow a similar strategy of matching $U_i$ with $v_i$ because the permutation of $V$ prevents the algorithm from learning the index $i$ for a vertex $u$ until its corresponding $V_i$ has been entirely processed. Additionally, no more $U_j$ groups where $j > i$ have edges to $v_i$ preventing it from obtaining additional potential matches. 
+%
+%Recall that the probability of at least 1 of $t$ maches is successful is $Pr[t] = 1- (1- p)^t$. The concavity of this function for a fixed $p$ implies that the expected sum of these is maximized when the potential matchings are distributed as evenly as possible. Because the algorithm doesn't learn the indicies of $v$ until it's too late it can be shown that on expectation, the most even assignment is upper bounded by a fractional assignment of each group $U_i$ to all the $v_j$ it has edges with. 
+%
+%For $v_i$, the number of assignments is $t = \sum_{j=0}^{i-1}{\frac{1}{p(n-j)}}$ \\
+%The probability of at least 1 success as $p \rightarrow 0$ is $(1- e^{\sum_{j=0}^{i-1}{\frac{1}{n-j}}})$ \\
+%The expected total number of successful matchings $S_n = \sum_{i=1}^n{(1- e^{\sum_{j=0}^{i-1}{\frac{1}{n-j}}})}$\\
+%$\lim_{n \rightarrow \infty}{S_n} = 1/2$.
+%\end{proof}
+%
+%Adaptive algorithms have more power than non-adaptive algorithms and are able to achieve better competitive ratios than $1/2$.
 
-The non-determinism of matching success also introduces two classes of algorithms not seen previously in the paper: adaptive and non-adaptive. After each pair is matched, the match's success is immediately computed according to $p$. If successful, $u$ and $v$ are both removed from the set of unmatched vertices. Otherwise, $u$ is permanently left unmatched and $v$ remains free to be matched later.
-
-An adaptive algorithm can learn the result of a matching immediately and attempt to rematch $v$ with a later $u$ if prior matches failed. However, a non-adaptive algorithm does not learn this information until after the algorithm completes. As a result, it may try to rematch a $v$ that was already successfully matched. In this case, each $v$ is only matched to one vertex.
-
-Explained via the advertising application, a non-adaptive algorithm won't learn if a user clicked on an ad until all ads are assigned, but an adaptive algorithm learns relatively quickly if the user clicked on an ad so it can target future ads to other users. Intuitively, non-adaptive algorithms are less powerful than adaptive algorithms because they learn less information which results in a lower expected number of matches. For a vanishing probability, the competitive ratio for non-adaptive algorithms is at most $1/2$ for both deterministic and randomized algorithms, making them less interesting than their adaptive counterparts.
-
-\begin{thm}
-\label{thm:Non-adaptive}
-For a vanishing probability, any non-adaptive algorithm (deterministic or randomized) achieves a competitive ratio of at most $1/2$ for the stochastic online bipartite matching problem.
-\end{thm}
-\begin{proof}
-The proof finds a particularly bad distribution of inputs for a deterministic algorithm. By Yao's minimax principle, this then bounds the best performance of any randomized algorithm. This bad input distribution is composed of $n$ known $V$ vertices called $v_1, v_2, ..., v_n$ permuted randomly when given to the algorithm. $U$ contains $n/p$ incoming vertices that are seperated into $n$ groups that each contain $1/p$ vertices. These groups arrive in order $U_1, U_2, ..., U_n$, but the sequence of $u$ within each group is permuted randomly. Finally, each group $U_i$ has matching edges to each $v_j$ where $i \leq j \leq n$ with probability $p$ of success. 
-
-The optimal offline algorithm is able to fractionally assign each group $U_i$ to $v_i$ without uncertainty giving $n$ total matchings. Note that a deterministic, non-adaptive algorithm could not follow a similar strategy of matching $U_i$ with $v_i$ because the permutation of $V$ prevents the algorithm from learning the index $i$ for a vertex $u$ until its corresponding $V_i$ has been entirely processed. Additionally, no more $U_j$ groups where $j > i$ have edges to $v_i$ preventing it from obtaining additional potential matches. 
-
-Recall that the probability of at least 1 of $t$ maches is successful is $Pr[t] = 1- (1- p)^t$. The concavity of this function for a fixed $p$ implies that the expected sum of these is maximized when the potential matchings are distributed as evenly as possible. Because the algorithm doesn't learn the indicies of $v$ until it's too late it can be shown that on expectation, the most even assignment is upper bounded by a fractional assignment of each group $U_i$ to all the $v_j$ it has edges with. 
-
-For $v_i$, the number of assignments is $t = \sum_{j=0}^{i-1}{\frac{1}{p(n-j)}}$ \\
-The probability of at least 1 success as $p \rightarrow 0$ is $(1- e^{\sum_{j=0}^{i-1}{\frac{1}{n-j}}})$ \\
-The expected total number of successful matchings $S_n = \sum_{i=1}^n{(1- e^{\sum_{j=0}^{i-1}{\frac{1}{n-j}}})}$\\
-$\lim_{n \rightarrow \infty}{S_n} = 1/2$.
-\end{proof}
-
-Adaptive algorithms have more power than non-adaptive algorithms and are able to achieve better competitive ratios than $1/2$. An extension of \textsc{Ranking}, as described in Section~\ref{section:ranking}, called \textsc{Stochastic-Ranking}, performs well when $p \rightarrow 1$. Interestingly enough, a deterministic algorithm, called \textsc{Stochastic-Balance}, performs better when $p \rightarrow 0$. These algorithms will be discussed in more detail in the following sections.
+Two algorithms are known to perform well for Stochastic Online Bipartite Matching \cite{key-4}. An extension of \textsc{Ranking}, as described in Section~\ref{section:ranking}, called \textsc{Stochastic-Ranking}, performs better when $p \rightarrow 1$. Interestingly enough, a deterministic algorithm, called \textsc{Stochastic-Balance}, performs better when $p \rightarrow 0$. These algorithms will be discussed in more detail in the following sections.
 
 \subsection{Proof Techniques}
 The competitive ratio of both of these algorithms is proved using a technique called factor-revealing linear programming \cite{key-5}. Drawing from ideas involving the duality between the algorithm and an adversary, it formulates the adversary's `choice' of some outcomes of the algorithm to maximize the number of vertices that are not matched. The adversary's moves however are constrained to be consistent with the applied algorithm. 
@@ -542,18 +546,19 @@ After finding this primal linear program, taking the dual and applying weak dual
 
 \subsection{Stochastic Balance Algorithm}
 
-\textsc{Stochastic-Balance} does not involve any randomization. On an incoming $u$, the algorithm attempts to balance the number of attempted matchings among vertices in $V$. To do so, \textsc{Stochastic-Balance} always matches $u$ to the unsuccessfully matched neighbor with the least number of failed matchings. The intuition for why this is effective for $p \rightarrow 0$ is the same reasoning we explored in the proof of Theorem \ref{thm:Non-adaptive}. The concavity of the function for the expected number of matchings when $p \rightarrow 0$ is maximized when the number of attempts is distributed as evenly as possible.
+\textsc{Stochastic-Balance} does not involve any randomization. On an incoming $u$, the algorithm attempts to balance the number of failed attempted matchings among vertices in $V$. To do so, \textsc{Stochastic-Balance} always matches $u$ to the unsuccessfully matched neighbor with the least number of failed matchings. The intuition for why this is effective for $p \rightarrow 0$ is that the concavity of the function for the expected number of matchings when $p \rightarrow 0$ is such that it is maximized when the number of attempts is distributed as evenly as possible.
 
-The analysis of the competitive ratio is made possible by formulating this problem using bin packing. The idea is that each $v$ randomly chooses a bin size $b_v$ that is unknown to the algorithm before the algorithm starts. Each potential matching with $v$ is an item with size $p$ that is placed into the bin for $v$. We say that $v$ is successfully matched if and only if its bin is full. At that point, it no longer accepts potential matches. In essence, $b_v$ encodes the number of matching attempts needed before a success. This language allows us to easily represent the number of matching attempts as the current load divided by $p$. By linearity of expectation, the expected load on a vertex is equal to the probability of a successful matching.
+The analysis of the competitive ratio is made possible by formulating this problem using bin packing. The idea is that each $v$ randomly chooses a bin size $b_v$ that is unknown to the algorithm before the algorithm starts. Each potential matching with $v$ is an item with size $p$ that is placed into the bin for $v$ and adds a load of $p$. We say that $v$ is successfully matched if and only if its bin is full. At that point, it no longer accepts potential matches. In essence, $b_v$ encodes the number of matching attempts needed before a success. This language allows us to easily represent the number of matching attempts as the current load divided by $p$. By linearity of expectation, the expected load on a vertex is equal to the probability of a successful matching.
 
-\begin{defn}Let $b_v$ be a geometric random variable with parameter $p$. It represents the bin size for vertex $v$.
+\begin{defn}Let $b_v$ be a geometric random variable with parameter $p$. It represents the bin size for vertex $v$. 
+\[Pr[b_v = pt] = p(1-p)^{t-1}\]
 \end{defn}
 
 The factor-revealing linear program of \cite{key-4} defines $f_v(x)$ to be the variables of the linear program corresponding to the probability that vertex $v$ has failed to be matched at the end of the algorithm with resultant load $x$. Note that the number of load levels is linear with $|U|$ because there are at most $|U|$ matching edges to any $v$ which contribute $p$ to the load. The expected number of failures for the algorithm is 
 \[\sum_{v}{\sum_{x}f_v(x)},\]
 which the adversary attempts to maximize under the constraints of \textsc{Stochastic-Balance}. Finally, $L^*_v$ is an additional variable encoding the load assigned to $v$ by the optimal offline algorithm at the end of the algorithm.
 
-Next, we display the factor-revealing linear program for \textsc{Stochastic-Balance} as presented in \cite{key-4}.
+Next, we display the factor-revealing linear program for \textsc{Stochastic-Balance}.
 
 \begin{defn} \textsc{Stochastic-Balance} Factor-Revealing Linear Program \\
 \begin{alignat}{3}
@@ -577,7 +582,7 @@ Let $q_v(x)$ be the probability that $x$ is the resulting load for $v$ after any
 
 We are now equipped to prove the correctness of the constraints 4.1 and 4.2. We will do so through the following Lemmas.
 
-\begin{lem} Constraint 4.1: $f_v(x) = (1-p)^{(x/p)}q_v(x)$ 
+\begin{lem} $f_v(x) = (1-p)^{(x/p)}q_v(x)$ 
 \begin{proof}
 \[f_v(x) = Pr[(b_v > x) \wedge (L^{\infty}_u(b_v) = x)]\] 
 \[f_v(x) = Pr[b_v > x]Pr[L^{\infty}_u(b_v) = x]\] 
@@ -593,7 +598,13 @@ This follows from representing the probability of a resulting load being unsucce
 \[g_v(x) = Pr[b_v = x]Pr[L^{\infty}_v(b_v) \geq x]\]
 \[g_v(x) = p(1-p)^{(x/p-1)}\sum_{y \geq x}{q_v(y)}\] 
 
-This follows from noting that a load is successful if it equals its threshold. But also, the resulting load of the algorithm if there is no limit on the load must give some load greater than $x$ or $x$ is not possibly obtained. This probability of the first part is $ p(1-p)^{(x/p-1)}$ while the probability of the second is the sum of each of these disjoint $q_v(y)$ events. Because $f_v(x)$ and $g_v(x)$ are defined complementarily, the sum over the possible loads and vertices must equal the total number of vertices, $\sum_v{\sum_x{(f_v(x) + g_v(x))}} = n$. Substituting $g_v(x)$ for $f_v(x)$ gives Constraint 4.1.
+This follows from noting that a load is successful if it equals its threshold. But also, the resulting load of the algorithm if there is no limit on the load must give some load greater than $x$ or $x$ is not possibly obtained. This probability of the first part is $ p(1-p)^{(x/p-1)}$ while the probability of the second is the sum of each of these disjoint $q_v(y)$ events.
+\end{proof}
+\end{lem}
+
+\begin{lem} Constraint 4.1: $\sum_x{\sum_v{f_v(x)(1-p)^{-x/p}}} = n$
+\begin{proof}
+ Because $f_v(x)$ and $g_v(x)$ are defined complementarily, the sum over the possible loads and vertices must equal the total number of vertices, $\sum_v{\sum_x{(f_v(x) + g_v(x))}} = n$. Substituting $g_v(x)$ for $f_v(x)$ gives Constraint 4.1.
 \end{proof}
 \end{lem}
 
@@ -609,9 +620,8 @@ This is because for a vertex $v$ that ends up with load $x$, all $v'$ on the opt
 
 Using this linear program, \cite{key-4} proves the following theorem.
 
-\begin{thm} \textsc{Stochastic-Balance} achieves a competitive ratio of 
+\begin{thm} \textsc{Stochastic-Balance} achieves a competitive ratio for the stochastic online bipartite matching problem of
 \[\frac{1+(1-p)^ {2/p}}{2}\]
-for the stochastic online bipartite matching problem.
 \end{thm}
 
 By taking the dual of this linear program given in Definition~\ref{defn:lp}, finding a feasible solution, and applying weak duality, \cite{key-4} was able to to obtain an upper bound on the number of failed matchings which \textsc{Stochastic-Balance} will encounter. The full derivation of the competitive ratio is not given here, but we encourage interested readers to consult \cite{key-4} for the full proof.
@@ -622,9 +632,9 @@ By taking the dual of this linear program given in Definition~\ref{defn:lp}, fin
 \textsc{Stochastic-Ranking} is very similar to \textsc{Ranking}, as described in Section~\ref{section:ranking}. It begins by randomly permuting the set of vertices $V$. Upon an incoming vertex to be matched, the algorithm matches it with the highest ranked neighbor that has not been successfully matched. Unlike our previous proofs for the competitive ratio of \textsc{Ranking}, the proof for \textsc{Stochastic-Ranking} uses a Factor-Revealing Linear Program. We won't go into the details of this linear program, but it compares the difference in performance of \textsc{Stochastic-Ranking} from the optimal offline algorithm by classifying matchings as good matchings or bad matchings. A bad matching occurs when matched edge $(u, v)$ has $\sigma(v) < \sigma(m^*(u))$. Otherwise, a matching is a good matching. The linear program finds constraints relating the load caused by good and bad matchings resulting from the algorithm to prevent the adversary from maximizing the number of failed matchings.
 
 \begin{thm}
-\textsc{Stochastic-Ranking} achieves a competitive ratio of
+\textsc{Stochastic-Ranking} achieves a competitive ratio for the stochastic online bipartite matching problem of
 \[\left (1-\frac{1}{e} \right ) - \left (1-\frac{2}{e}\right ) \cdot (1-p)^{1/p}\]
-for the stochastic online bipartite matching problem.
+
 \end{thm}
 
 The technique for proving this competitive ratio is very similar to the technique used to prove Theorem 18. We again encourage interested readers to consult the proof in \cite{key-4}.
