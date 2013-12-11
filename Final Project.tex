@@ -550,7 +550,7 @@ We will prove Constraint 4.1 and 4.2 to give a flavor for how these constraints 
 Let $q_v(x) = \sum_{\theta: L^{\infty}_v(\theta)=x}{\prod_{z \neq v}{Pr[\theta_z]}}$. This is the probability that $x$ is the resulting load for $v$ after any run of the algorithm. This is computed by summing the probability of randomly obtaining each $\theta$ that gives load $x$ for $v$.
 \end{defn}
 
-\begin{lem} Constraint 4.1: $f_v(x) = (1-p)^{(x/p)}q_v(x)$ 
+\begin{lem} $f_v(x) = (1-p)^{(x/p)}q_v(x)$ 
 \begin{proof}
 $f_v(x) = Pr[(\theta_v > x) \wedge (L^{\infty}_u(\theta_v) = x)]$ \\
 $f_v(x) = Pr[\theta_v > x]Pr[L^{\infty}_u(\theta_v) = x]$ \\
@@ -566,7 +566,13 @@ $g_v(x) = Pr[(\theta_v = x) \wedge (L^{\infty}_v(\theta_v) \geq x)]$ \\
 $g_v(x) = Pr[\theta_v = x]Pr[L^{\infty}_v(\theta_v) \geq x]$ \\
 $g_v(x) = p(1-p)^{(x/p-1)}\sum_{y \geq x}{q_v(y)}$ 
 
-This follows from noting that a load is successful if it equals its threshold. But also, the resulting load of the algorithm if there is no limit on the load must give some load greater than $x$ or $x$ is not possibly obtained. This probability of the first part is $ p(1-p)^{(x/p-1)}$ while the probability of the second is the sum of each of these disjoint $q_v(y)$ events. Because $f_v(x)$ and $g_v(x)$ are defined complementarily, the sum over the possible loads and vertices must equal the total number of vertices, $\sum_v{\sum_x{(f_v(x) + g_v(x))}} = n$. Substituting $g_v(x)$ for $f_v(x)$ gives Constraint 4.1.
+This follows from noting that a load is successful if it equals its threshold. But also, the resulting load of the algorithm if there is no limit on the load must give some load greater than $x$ or $x$ is not possibly obtained. This probability of the first part is $ p(1-p)^{(x/p-1)}$ while the probability of the second is the sum of each of these disjoint $q_v(y)$ events. 
+\end{proof}
+\end{lem}
+
+\begin{lem} Constraint 4.1: $\sum_x{\sum_v{f_v(x)(1-p)^{-x/p}}} = n$ 
+\begin{proof}
+Because $f_v(x)$ and $g_v(x)$ are defined complementarily, the sum over the possible loads and vertices must equal the total number of vertices, $\sum_v{\sum_x{(f_v(x) + g_v(x))}} = n$. Substituting $g_v(x)$ for $f_v(x)$ gives Constraint 4.1.
 \end{proof}
 \end{lem}
 
